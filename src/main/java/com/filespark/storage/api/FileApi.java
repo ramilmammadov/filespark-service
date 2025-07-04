@@ -6,6 +6,8 @@ import com.filespark.storage.model.request.FileUploadRequest;
 import com.filespark.storage.model.response.FileInfoResponse;
 import com.filespark.storage.service.FileStorageService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,14 +28,23 @@ public class FileApi {
     }
 
     @PostMapping(value = "/upload", consumes = "multipart/form-data")
-    public ResponseEntity<FileInfoResponse> uploadFile(
+    public ResponseEntity<?> uploadFile(
             @RequestHeader("X-User-Id") String userId,
             @RequestPart("file") MultipartFile file,
             @RequestParam("filename") String filename,
             @RequestParam("visibility") Visibility visibility,
             @RequestParam("fileType") FileType fileType,
+            @Parameter(
+                    name = "tags",
+                    description = "Up to 5 tags",
+                    in = ParameterIn.QUERY,
+                    example = "tag1,tag2"
+            )
             @RequestParam(value = "tags", required = false) List<String> tags) {
 
+        if (tags != null && tags.size() > 5) {
+            return ResponseEntity.badRequest().body("You can provide at most 5 tags.");
+        }
         FileUploadRequest metadata = new FileUploadRequest(filename, fileType, visibility, tags);
         return ResponseEntity.ok(fileService.upload(userId, file, metadata));
     }

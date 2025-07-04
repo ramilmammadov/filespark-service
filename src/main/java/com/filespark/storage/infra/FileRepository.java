@@ -18,17 +18,13 @@ public interface FileRepository extends MongoRepository<FileDocument, String> {
 
     Optional<FileDocument> findByLink(String link);
 
-    @Query("{'tags': {$elemMatch: {$regex: ?0, $options: 'i'}}}")
-    Page<FileDocument> findByTag(String tag, Pageable pageable);
-
     Page<FileDocument> findByVisibility(Visibility visibility, Pageable pageable);
 
-    @Query("{'userId': ?0, 'tags': {$elemMatch: {$regex: ?1, $options: 'i'}}}")
-    Page<FileDocument> findByUserIdAndTag(String userId, String tag, Pageable pageable);
+    Page<FileDocument> findByUserIdAndTagsContaining(String userId, String tag, Pageable pageable);
 
     Page<FileDocument> findByUserId(String userId, Pageable pageable);
 
-    @Query("{ 'visibility': ?0, 'tags': { $elemMatch: { $regex: ?1, $options: 'i' } } }")
-    Page<FileDocument> findByVisibilityAndTag(Visibility visibility, String tag, Pageable pageable);
+    @Query("{'visibility': ?0, 'tags': {$in: [{$regex: ?1, $options: 'i'}]}}")
+    Page<FileDocument> searchByVisibilityAndTagIgnoreCase(Visibility visibility, String tag, Pageable pageable);
 
 }

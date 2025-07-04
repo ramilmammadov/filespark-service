@@ -30,9 +30,11 @@ All endpoints are documented via **Swagger**.
 
 ### Build & Run
 ```bash
-mvn clean package
-docker build -t filespark-storage .
-docker run -p 8080:8080 filespark-storage
+# Run everything (app + MongoDB + MinIO + bucket creation)
+docker compose up --build
+
+# To stop everything
+docker compose down
 ```
 
 ---

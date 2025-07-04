@@ -117,7 +117,7 @@ public class FileStorageServiceImpl implements FileStorageService {
     @Override
     public Page<FileInfoResponse> listPublicFiles(String tag, Pageable pageable) {
         if (tag != null) {
-            return repository.findByVisibilityAndTag(Visibility.PUBLIC, tag, pageable)
+            return repository.searchByVisibilityAndTagIgnoreCase(Visibility.PUBLIC, tag, pageable)
                     .map(FileInfoResponse::from);
         }
         return repository.findByVisibility(Visibility.PUBLIC, pageable)
@@ -127,7 +127,7 @@ public class FileStorageServiceImpl implements FileStorageService {
     @Override
     public Page<FileInfoResponse> listUserFiles(String userId, String tag, Pageable pageable) {
         if (tag != null) {
-            return repository.findByUserIdAndTag(userId, tag, pageable)
+            return repository.findByUserIdAndTagsContaining(userId, tag, pageable)
                     .map(FileInfoResponse::from);
         }
         return repository.findByUserId(userId, pageable)
